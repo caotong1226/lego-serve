@@ -1,0 +1,10 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head></head>
+    <body>
+
+        <img src="{{url}}"/>
+
+    </body>
+
+</html>
