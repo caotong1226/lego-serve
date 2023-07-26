@@ -10,7 +10,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-lego-server",
     "stop": "egg-scripts stop --title=egg-server-lego-server",
-    "dev": "egg-bin dev",
+    "dev": "npm run ets && egg-bin dev",
     "debug": "egg-bin debug",
     "test-local": "egg-bin test -p",
     "test": "npm run lint -- --fix && npm run test-local",
@@ -35,6 +35,7 @@
     "egg-hello": "^1.0.1",
     "egg-jwt": "^3.1.7",
     "egg-mongoose": "^3.3.1",
+    "egg-redis": "^2.5.0",
     "egg-scripts": "^2.17.0",
     "egg-tracer": "^2.0.0",
     "egg-validate": "^2.0.2",

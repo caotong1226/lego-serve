@@ -3,3 +3,11 @@
 1690355623876 -- GET -- /api/users/getUserInfo -- 2ms
 1690355627982 -- GET -- /api/users/getUserInfo -- 14ms
 1690355720540 -- GET -- /api/users/getUserInfo -- 2ms
+1690363105533 -- GET -- /api/users/genVeriCode -- 1ms
+1690363132795 -- GET -- /api/users/genVeriCode -- 0ms
+1690363151828 -- GET -- /api/users/genVeriCode -- 0ms
+1690363177694 -- GET -- /api/users/genVeriCode -- 1ms
+1690363178719 -- GET -- /api/users/genVeriCode -- 0ms
+1690363198304 -- GET -- /api/users/genVeriCode -- 0ms
+1690363217946 -- POST -- /api/users/genVeriCode -- 3ms
+1690364503316 -- POST -- /api/users/genVeriCode -- 4ms
