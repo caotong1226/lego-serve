@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover"
+    />
+    <title>授权成功</title>
+  </head>
+  <body>
+    <h1>授权成功</h1>
+    <h2>两秒后关闭</h2>
+  </body>
+  <script>
+    window.onload = function () {
+      setTimeout(function () {
+        const message = {
+          type: "oauth-token",
+          token: "{{token}}",
+        }
+        window.opener.postMessage(message, "http://localhost:8080")
+        window.close();
+      }, 2000)
+    }
+  </script>
+</html>

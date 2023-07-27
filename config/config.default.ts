@@ -43,10 +43,23 @@ export default (appInfo: EggAppInfo) => {
     },
   };
 
+  config.cors = {
+    origin: 'https://localhost:8080',
+    allowMethods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH',
+  };
+
   const aliCloudConfig = {
-    accessKeyId: process.env.accessKeyId,
-    accessKeySecret: process.env.accessKeySecret,
+    accessKeyId: process.env.ALI_KEY_ID,
+    accessKeySecret: process.env.ALI_KEY_SECRET,
     endpoint: 'dysmsapi.aliyuncs.com',
+  };
+
+  const giteeOauthConfig = {
+    clientId: process.env.GITEE_OAUTH_CLIENT_ID,
+    clientSecret: process.env.GITEE_OAUTH_CLIENT_SECRET,
+    redirectUrl: 'http://localhost:7002/api/users/loginGetOauthToken',
+    authUrl: 'https://gitee.com/oauth/token?grant_type=authorization_code',
+    giteeUserInfoApi: 'https://gitee.com/api/v5/user',
   };
 
   // add your special config in here
@@ -54,6 +67,7 @@ export default (appInfo: EggAppInfo) => {
     sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
     baseUrl: 'default.url',
     aliCloudConfig,
+    giteeOauthConfig,
   };
 
   // the return config will combines to EggAppConfig

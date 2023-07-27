@@ -10,7 +10,9 @@ export interface UserProps {
   phoneNumber?: string;
   createdAt: Date;
   updatedAt: Date;
-  type: 'email' | 'cellphone';
+  type: 'email' | 'cellphone' | 'oauth';
+  provider?: 'gitee';
+  oauthID?: string;
 }
 function initUserModel(app: Application) {
   // const AutoIncrement = AutoIncrementFactory(app.mongoose);
@@ -24,6 +26,8 @@ function initUserModel(app: Application) {
     email: { type: String },
     phoneNumber: { type: String },
     type: { type: String, default: 'email' },
+    provider: { type: String },
+    oauthID: { type: String },
   }, {
     timestamps: true, toJSON: {
       transform(_doc, ret) {
