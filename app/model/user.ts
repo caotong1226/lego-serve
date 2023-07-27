@@ -10,18 +10,20 @@ export interface UserProps {
   phoneNumber?: string;
   createdAt: Date;
   updatedAt: Date;
+  type: 'email' | 'cellphone';
 }
 function initUserModel(app: Application) {
   // const AutoIncrement = AutoIncrementFactory(app.mongoose);
   const mongoose = app.mongoose;
   const Schema = mongoose.Schema;
   const UserSchema = new Schema<UserProps>({
-    username: { type: 'string', unique: true, required: true },
-    password: { type: 'string', required: true },
-    nickName: { type: 'string' },
-    picture: { type: 'string' },
-    email: { type: 'string' },
-    phoneNumber: { type: 'string' },
+    username: { type: String, unique: true, required: true },
+    password: { type: String },
+    nickName: { type: String },
+    picture: { type: String },
+    email: { type: String },
+    phoneNumber: { type: String },
+    type: { type: String, default: 'email' },
   }, {
     timestamps: true, toJSON: {
       transform(_doc, ret) {

@@ -18,4 +18,22 @@ export default class UserService extends Service {
   async findByUsername(username: string) {
     return this.ctx.model.User.findOne({ username });
   }
+  async loginByCellphone(cellphone: string) {
+    const { ctx, app } = this;
+    const user = await this.findByUsername(cellphone);
+    // 检查user记录是否存在
+    if (user) {
+      const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret);
+      return token;
+    }
+    const userCreatedData: Partial<UserProps> = {
+      username: cellphone,
+      phoneNumber: cellphone,
+      nickName: `lego${cellphone.slice(-4)}`,
+      type: 'cellphone',
+    };
+    const newUser = await ctx.model.User.create(userCreatedData);
+    const token = app.jwt.sign({ username: newUser.username }, app.config.jwt.secret);
+    return token;
+  }
 }

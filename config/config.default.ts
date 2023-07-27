@@ -42,10 +42,17 @@ export default (appInfo: EggAppInfo) => {
     },
   };
 
+  const aliCloudConfig = {
+    accessKeyId: '',
+    accessKeySecret: '',
+    endpoint: 'dysmsapi.aliyuncs.com',
+  };
+
   // add your special config in here
   const bizConfig = {
     sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
     baseUrl: 'default.url',
+    aliCloudConfig,
   };
 
   // the return config will combines to EggAppConfig
