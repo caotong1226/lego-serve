@@ -45,3 +45,5 @@
 1690366837441 -- POST -- /api/users/genVeriCode -- 2ms
 1690366843964 -- POST -- /api/users/loginByPhoneNumber -- 3ms
 1690366870035 -- POST -- /api/users/loginByPhoneNumber -- 16ms
+1690429750756 -- POST -- /api/users/genVeriCode -- 5ms
+1690429762854 -- POST -- /api/users/loginByPhoneNumber -- 13ms

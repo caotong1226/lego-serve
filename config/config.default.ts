@@ -1,5 +1,6 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
@@ -43,8 +44,8 @@ export default (appInfo: EggAppInfo) => {
   };
 
   const aliCloudConfig = {
-    accessKeyId: '',
-    accessKeySecret: '',
+    accessKeyId: process.env.accessKeyId,
+    accessKeySecret: process.env.accessKeySecret,
     endpoint: 'dysmsapi.aliyuncs.com',
   };
 

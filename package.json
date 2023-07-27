@@ -10,7 +10,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-lego-server",
     "stop": "egg-scripts stop --title=egg-server-lego-server",
-    "dev": "npm run ets && egg-bin dev",
+    "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test-local": "egg-bin test -p",
     "test": "npm run lint -- --fix && npm run test-local",
@@ -22,6 +22,8 @@
     "ets": "npx ets -w"
   },
   "dependencies": {
+    "@alicloud/dysmsapi20170525": "^2.0.24",
+    "@alicloud/openapi-client": "^0.4.6",
     "@eggjs/tegg": "^3.5.2",
     "@eggjs/tegg-aop-plugin": "^3.5.2",
     "@eggjs/tegg-config": "^3.2.3",
@@ -30,6 +32,7 @@
     "@eggjs/tegg-plugin": "^3.5.2",
     "@eggjs/tegg-schedule-plugin": "^3.5.2",
     "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
     "egg": "^3.15.0",
     "egg-bcrypt": "^1.1.0",
     "egg-hello": "^1.0.1",

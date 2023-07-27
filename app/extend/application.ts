@@ -1,6 +1,10 @@
 import axios, { type AxiosInstance } from 'axios';
 import type { Application } from 'egg';
+import Dysmsapi from '@alicloud/dysmsapi20170525';
+import * as $OpenApi from '@alicloud/openapi-client';
 const AXIOS = Symbol('Application#axios');
+const ALCLIENT = Symbol('Application#ALClient');
+
 export default {
   echo(msg: string) {
     const that = this as Application;
@@ -14,5 +18,17 @@ export default {
       });
     }
     return this[AXIOS];
+  },
+  get ALClient():Dysmsapi {
+    const that = this as Application;
+    const { accessKeyId, accessKeySecret, endpoint } = that.config.aliCloudConfig;
+    if (!this[ALCLIENT]) {
+      const config = new $OpenApi.Config({
+        accessKeyId, accessKeySecret,
+      });
+      config.endpoint = endpoint;
+      this[ALCLIENT] = new Dysmsapi(config);
+    }
+    return this[ALCLIENT];
   },
 };

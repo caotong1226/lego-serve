@@ -35,8 +35,12 @@ export const userErrorMessages = {
     message: '请勿频繁的获取短信验证码',
   },
   loginVeriCodeIncorrectFailInfo: {
-    errCode: 101005,
+    errCode: 101006,
     message: '验证码不正确',
+  },
+  sendVeriCodeError: {
+    errCode: 101007,
+    message: '验证码发送失败',
   },
 };
 
@@ -79,8 +83,16 @@ export default class HomeController extends Controller {
     }
     // [0 - 1) * 9000 + 1000 = [1000 - 10000)
     const veriCode = Math.floor((Math.random() * 9000) + 1000).toString();
+    // 判断运行环境
+    if (app.config.env === 'prod') {
+      // 发送短信
+      const resp = await this.service.user.sendSMS(phoneNumber, veriCode);
+      if (resp.body.code !== 'OK') {
+        return ctx.helper.error({ ctx, errorType: 'sendVeriCodeError' });
+      }
+    }
     await app.redis.set(`phoneVeriCode-${phoneNumber}`, veriCode, 'ex', 60);
-    ctx.helper.success({ ctx, res: { veriCode }, msg: '发送成功' });
+    ctx.helper.success({ ctx, msg: '验证码发送成功', res: app.config.env === 'local' ? { veriCode } : null });
   }
   async loginByEmail() {
     const { ctx, service, app } = this;

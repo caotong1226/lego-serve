@@ -1,5 +1,6 @@
 import { Service } from 'egg';
 import { UserProps } from '../model/user';
+import * as $Dysmsapi from '@alicloud/dysmsapi20170525';
 export default class UserService extends Service {
   public async createByEmail(payload: UserProps) {
     const { ctx } = this;
@@ -17,6 +18,18 @@ export default class UserService extends Service {
   }
   async findByUsername(username: string) {
     return this.ctx.model.User.findOne({ username });
+  }
+  async sendSMS(phoneNumber:string, veriCode:string) {
+    const { app } = this;
+    // 配置参数
+    const sendSMSRequest = new $Dysmsapi.SendSmsRequest({
+      phoneNumbers: phoneNumber,
+      signName: ' 慕课乐高',
+      templateCode: 'SMS_223580190',
+      templateParam: `\"code\"\"${veriCode}\"`,
+    });
+    const resp = await app.ALClient.sendSms(sendSMSRequest);
+    return resp;
   }
   async loginByCellphone(cellphone: string) {
     const { ctx, app } = this;
