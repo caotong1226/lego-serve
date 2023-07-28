@@ -15,8 +15,8 @@ export interface UserProps {
   oauthID?: string;
 }
 function initUserModel(app: Application) {
-  // const AutoIncrement = AutoIncrementFactory(app.mongoose);
   const mongoose = app.mongoose;
+  // const AutoIncrement = AutoIncrementFactory(mongoose);
   const Schema = mongoose.Schema;
   const UserSchema = new Schema<UserProps>({
     username: { type: String, unique: true, required: true },

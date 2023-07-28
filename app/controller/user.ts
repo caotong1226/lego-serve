@@ -50,8 +50,8 @@ export const userErrorMessages = {
 
 export default class HomeController extends Controller {
   async createByEmail() {
-    const { ctx, service, app } = this;
-    const errors = app.validator.validate(userCreateRules, ctx.request.body);
+    const { ctx, service } = this;
+    const errors = this.validateUserInput(userCreateRules);
     ctx.logger.warn(errors);
     if (errors) {
       return ctx.helper.error({ ctx, errorType: 'userValidateFail', error: errors });
@@ -95,7 +95,7 @@ export default class HomeController extends Controller {
         return ctx.helper.error({ ctx, errorType: 'sendVeriCodeError' });
       }
     }
-    await app.redis.set(`phoneVeriCode-${phoneNumber}`, veriCode, 'ex', 60);
+    await app.redis.set(`phoneVeriCode-${phoneNumber}`, veriCode, 'ex', 360000);
     ctx.helper.success({ ctx, msg: '验证码发送成功', res: app.config.env === 'local' ? { veriCode } : null });
   }
   async loginByEmail() {
