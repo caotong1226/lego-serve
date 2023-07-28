@@ -51,3 +51,6 @@
 1690513856031 -- POST -- /api/work -- 0ms
 1690513869649 -- POST -- /api/works -- 2ms
 1690513902036 -- POST -- /api/works -- 12ms
+1690516508284 -- POST -- /api/works -- 4ms
+1690516704376 -- POST -- /api/users/loginByEmail -- 92ms
+1690516709664 -- POST -- /api/users/loginByEmail -- 1ms

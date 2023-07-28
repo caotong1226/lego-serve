@@ -1,4 +1,5 @@
 import { Controller } from 'egg';
+import inputValidate from '../decorator/inputValidate';
 const userCreateRules = {
   username: 'email',
   password: { type: 'password', min: 8 },
@@ -13,53 +14,14 @@ const userPhoneCreateRules = {
   veriCode: { type: 'string', format: /^\d{4}$/, message: '验证码格式错误' },
 };
 
-export const userErrorMessages = {
-  userValidateFail: {
-    errCode: 101001,
-    message: '输入信息验证失败',
-  },
-  createUserAlreadyExists: {
-    errCode: 101002,
-    message: '该邮箱已被注册，请直接登录',
-  },
-  loginCheckFailInfo: {
-    errCode: 101003,
-    message: '该用户不存在或密码错误',
-  },
-  loginValidateFail: {
-    errCode: 101004,
-    message: '登录检验失败',
-  },
-  sendVeriCodeFrequentlyFailInfo: {
-    errCode: 101005,
-    message: '请勿频繁的获取短信验证码',
-  },
-  loginVeriCodeIncorrectFailInfo: {
-    errCode: 101006,
-    message: '验证码不正确',
-  },
-  sendVeriCodeError: {
-    errCode: 101007,
-    message: '验证码发送失败',
-  },
-  giteeOauthError: {
-    errCode: 101008,
-    message: 'gitee 授权出错',
-  },
-};
-
 export default class HomeController extends Controller {
+  @inputValidate(userCreateRules, 'userValidateFail')
   async createByEmail() {
     const { ctx, service } = this;
-    const errors = this.validateUserInput(userCreateRules);
-    ctx.logger.warn(errors);
-    if (errors) {
-      return ctx.helper.error({ ctx, errorType: 'userValidateFail', error: errors });
-    }
     const { username } = ctx.request.body;
     const user = await service.user.findByUsername(username);
     if (user) {
-      return ctx.helper.error({ ctx, errorType: 'createUserAlreadyExists', error: errors });
+      return ctx.helper.error({ ctx, errorType: 'createUserAlreadyExists' });
     }
     const userData = await service.user.createByEmail(ctx.request.body);
     ctx.helper.success({ ctx, res: userData });
@@ -70,20 +32,16 @@ export default class HomeController extends Controller {
     ctx.logger.warn(errors);
     return errors;
   }
+  @inputValidate(sendCodeRules, 'userValidateFail')
   async sendVeriCode() {
     const { ctx, app } = this;
     const { phoneNumber } = ctx.request.body;
-    // 检查用户输入
-    const error = this.validateUserInput(sendCodeRules);
-    if (error) {
-      return ctx.helper.error({ ctx, errorType: 'userValidateFail', error });
-    }
     // 获取redis数据
     // phoneVeriCode - phone number
     const preVeriCode = await app.redis.get(`phoneVeriCode-${phoneNumber}`);
     // 判断preVeriCode是否存在
     if (preVeriCode) {
-      return ctx.helper.error({ ctx, errorType: 'sendVeriCodeFrequentlyFailInfo', error });
+      return ctx.helper.error({ ctx, errorType: 'sendVeriCodeFrequentlyFailInfo' });
     }
     // [0 - 1) * 9000 + 1000 = [1000 - 10000)
     const veriCode = Math.floor((Math.random() * 9000) + 1000).toString();
@@ -98,20 +56,17 @@ export default class HomeController extends Controller {
     await app.redis.set(`phoneVeriCode-${phoneNumber}`, veriCode, 'ex', 360000);
     ctx.helper.success({ ctx, msg: '验证码发送成功', res: app.config.env === 'local' ? { veriCode } : null });
   }
+  @inputValidate(userCreateRules, 'loginValidateFail')
   async loginByEmail() {
     const { ctx, service, app } = this;
-    const error = this.validateUserInput(userCreateRules);
-    if (error) {
-      return ctx.helper.error({ ctx, errorType: 'userValidateFail', error });
-    }
     const { username, password } = ctx.request.body;
     const user = await service.user.findByUsername(username);
     if (!user) {
-      return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo', error });
+      return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo' });
     }
     const verifyPwd = await ctx.compare(password, user.password);
     if (!verifyPwd) {
-      return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo', error });
+      return ctx.helper.error({ ctx, errorType: 'loginCheckFailInfo' });
     }
     const token = app.jwt.sign({ username: user.username }, app.config.jwt.secret);
     ctx.helper.success({ ctx, res: { token }, msg: '登录成功' });

@@ -1,22 +1,13 @@
 import { Controller } from 'egg';
+import inputValidate from '../decorator/inputValidate';
 const workCreateRules = {
   title: 'string',
 };
 
-export const workErrorMessages = {
-  workValidateFail: {
-    errCode: 101001,
-    message: '输入信息验证失败',
-  },
-};
-
 export default class WorkController extends Controller {
+  @inputValidate(workCreateRules, 'workValidateFail')
   async createWork() {
     const { ctx, service } = this;
-    const errors = this.validateWorkInput(workCreateRules);
-    if (errors) {
-      return ctx.helper.error({ ctx, errorType: 'workValidateFail', error: errors });
-    }
     const workData = await service.work.createEmptyWork(ctx.request.body);
     ctx.helper.success({ ctx, res: workData });
   }
