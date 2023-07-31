@@ -14,7 +14,7 @@ const userPhoneCreateRules = {
   veriCode: { type: 'string', format: /^\d{4}$/, message: '验证码格式错误' },
 };
 
-export default class HomeController extends Controller {
+export default class UserController extends Controller {
   @inputValidate(userCreateRules, 'userValidateFail')
   async createByEmail() {
     const { ctx, service } = this;
