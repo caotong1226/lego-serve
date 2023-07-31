@@ -49,9 +49,18 @@ export default (appInfo: EggAppInfo) => {
     allowMethods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH',
   };
 
-  config.multipart = {
-    mode: 'file',
-    tmpdir: join(appInfo.baseDir, 'uploads'),
+  // config.multipart = {
+  //   mode: 'file',
+  //   tmpdir: join(appInfo.baseDir, 'uploads'),
+  // };
+
+  config.oss = {
+    client: {
+      accessKeyId: process.env.ALI_KEY_ID || '',
+      accessKeySecret: process.env.ALI_KEY_SECRET || '',
+      bucket: '',
+      endpoint: '',
+    },
   };
 
   config.static = {
