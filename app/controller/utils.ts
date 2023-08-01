@@ -1,32 +1,32 @@
-import { Controller, FileStream } from "egg";
-import sharp from "sharp";
-import { parse, join, extname } from "path";
-import { nanoid } from "nanoid";
-import { createWriteStream } from "fs";
-import { pipeline } from "stream/promises";
-import * as sendToWormhole from "stream-wormhole";
-import Busboy from "busboy";
-import { createSSRApp } from "vue";
-import { renderToString, renderToNodeStream } from "@vue/server-renderer";
+import { Controller, FileStream } from 'egg';
+import * as sharp from 'sharp';
+import { parse, join, extname } from 'path';
+import { nanoid } from 'nanoid';
+import { createWriteStream } from 'fs';
+import { pipeline } from 'stream/promises';
+import * as sendToWormhole from 'stream-wormhole';
+import * as Busboy from 'busboy';
+import { createSSRApp } from 'vue';
+import { renderToString, renderToNodeStream } from '@vue/server-renderer';
 
 export default class UtilsController extends Controller {
   async renderH5PageTest() {
     const { ctx } = this;
     const vueApp = createSSRApp({
-      data: () => ({ msg: "hello world" }),
-      template: "<h1>{{msg}}</h1>",
+      data: () => ({ msg: 'hello world' }),
+      template: '<h1>{{msg}}</h1>',
     });
     const appContent = await renderToString(vueApp);
-    ctx.response.type = "text/html";
+    ctx.response.type = 'text/html';
     ctx.body = appContent;
     const stream = renderToNodeStream(vueApp);
     ctx.status = 200;
     await pipeline(stream, ctx.res);
   }
-  splitIdAndUuid(str = "") {
-    const result = { id: 0, uuid: "" };
+  splitIdAndUuid(str = '') {
+    const result = { id: 0, uuid: '' };
     if (!str) return result;
-    const index = str.indexOf("-");
+    const index = str.indexOf('-');
     if (index < 0) return result;
     result.id = Number(str.slice(0, index));
     result.uuid = str.slice(index + 1);
@@ -40,22 +40,22 @@ export default class UtilsController extends Controller {
     const query = this.splitIdAndUuid(idAndUuid);
     try {
       const pageData = await ctx.service.utils.renderToPageData(query);
-      await ctx.render("page.nj", pageData);
+      await ctx.render('page.nj', pageData);
     } catch (e) {
-      ctx.helper.error({ ctx, errnoType: "h5WorkNotExistError" });
+      ctx.helper.error({ ctx, errorType: 'h5WorkNotExistError' });
     }
   }
   async uploadToOss() {
     const { ctx } = this;
     const stream = await ctx.getFileStream();
-    const savedOssPath = join("test", nanoid(6) + extname(stream.filename));
+    const savedOssPath = join('test', nanoid(6) + extname(stream.filename));
     try {
       const result = await ctx.oss.put(savedOssPath, stream);
       const { name, url } = result;
       ctx.helper.success({ ctx, res: { name, url } });
     } catch (error) {
       await sendToWormhole(stream);
-      return ctx.helper.error({ ctx, errorType: "imageUploadFail" });
+      return ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
     }
   }
   async uploadMultipleFiles() {
@@ -69,7 +69,7 @@ export default class UtilsController extends Controller {
         app.logger.info(part);
       } else {
         try {
-          const savedOssPath = join("test", nanoid(6) + extname(part.filename));
+          const savedOssPath = join('test', nanoid(6) + extname(part.filename));
           const result = await ctx.oss.put(savedOssPath, part);
           const { url } = result;
           urls.push(url);
@@ -77,12 +77,12 @@ export default class UtilsController extends Controller {
             await ctx.oss.delete(savedOssPath);
             return ctx.helper.error({
               ctx,
-              errorType: "imageUploadFileSizeError",
+              errorType: 'imageUploadFileSizeError',
             });
           }
         } catch (error) {
           await sendToWormhole(part);
-          return ctx.helper.error({ ctx, errorType: "imageUploadFail" });
+          return ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
         }
       }
     }
@@ -90,27 +90,27 @@ export default class UtilsController extends Controller {
   }
   uploadFileUseBusBoy() {
     const { ctx, app } = this;
-    return new Promise<string[]>((resolve) => {
+    return new Promise<string[]>(resolve => {
       const busboy = Busboy({ headers: ctx.req.headers });
       const results: string[] = [];
-      busboy.on("file", (fieldname, file, filename) => {
+      busboy.on('file', (fieldname, file, filename) => {
         app.logger.info(fieldname, file, filename);
         const uid = nanoid(6);
         const savedFilePath = join(
           app.config.baseDir,
-          "uploads",
-          uid + extname(filename as any)
+          'uploads',
+          uid + extname(filename as any),
         );
         file.pipe(createWriteStream(savedFilePath));
-        file.on("end", () => {
+        file.on('end', () => {
           results.push(savedFilePath);
         });
       });
-      busboy.on("field", (fieldname, val) => {
+      busboy.on('field', (fieldname, val) => {
         app.logger.info(fieldname, val);
       });
-      busboy.on("finish", () => {
-        app.logger.info("finish");
+      busboy.on('finish', () => {
+        app.logger.info('finish');
         resolve(results);
       });
       ctx.req.pipe(busboy);
@@ -128,7 +128,7 @@ export default class UtilsController extends Controller {
     const imageSource = sharp(filepath);
     const metadata = await imageSource.metadata();
     app.logger.debug(metadata);
-    let thumbnailUrl = "";
+    let thumbnailUrl = '';
     // 检查图片宽度是否大于300
     if (metadata.width && metadata.width > 300) {
       // 生成一个新的file path
@@ -155,13 +155,13 @@ export default class UtilsController extends Controller {
     const uid = nanoid(6);
     const savedFilePath = join(
       app.config.baseDir,
-      "uploads",
-      uid + extname(stream.filename)
+      'uploads',
+      uid + extname(stream.filename),
     );
     const savedThumbnailFilePath = join(
       app.config.baseDir,
-      "uploads",
-      uid + "_thumbnail" + extname(stream.filename)
+      'uploads',
+      uid + '_thumbnail' + extname(stream.filename),
     );
 
     // 处理保存原始文件的流
@@ -176,9 +176,9 @@ export default class UtilsController extends Controller {
     const thumbnailPromise = pipeline(stream, transformer, thumbnailTarget);
 
     try {
-      await Promise.all([savePromise, thumbnailPromise]);
+      await Promise.all([ savePromise, thumbnailPromise ]);
     } catch (error) {
-      return ctx.helper.error({ ctx, errorType: "imageUploadFail" });
+      return ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
     }
 
     ctx.helper.success({
