@@ -20,4 +20,9 @@ module.exports = (app: Application) => {
 
   router.post('/utils/upload-img', controller.utils.uploadMultipleFiles);
   router.get('/pages/:idAndUuid', controller.utils.renderToH5Page);
+
+  router.post('/channels/create', controller.work.createChannel);
+  router.get('/channels/getWorkChannel/:id', controller.work.getWorkChannel);
+  router.patch('/channels/updateName/:id', controller.work.updateChannelName);
+  router.delete('/channels/:id', controller.work.deleteChannel);
 };
