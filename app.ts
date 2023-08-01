@@ -19,6 +19,7 @@ export default class AppBoot implements IBoot {
   configWillLoad(): void {
     // 此时config文件已被合并读取，但是还未生效
     // 这是应用层修改配置的最后时机
+    this.app.config.coreMiddleware.push('customError');
   }
   async willReady(): Promise<void> {
     // app/model/user.ts => app.model.User

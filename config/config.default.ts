@@ -10,7 +10,7 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_1689665855933_6837';
 
   // add your egg config in here
-  config.middleware = [ 'logger', 'customError' ];
+  // config.middleware = [ 'logger', 'customError' ];
 
   config.mongoose = {
     client: {
@@ -32,7 +32,9 @@ export default (appInfo: EggAppInfo) => {
   };
 
   config.jwt = {
-    secret: '1234567890',
+    enable: true,
+    secret: process.env.JWT_SECRET || '',
+    match: [ '/api/users/getUserInfo', '/api/works', '/api/utils/upload-img' ],
   };
 
   config.redis = {
