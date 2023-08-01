@@ -18,5 +18,5 @@ module.exports = (app: Application) => {
   router.post('/api/works/publish/:id', jwtMiddleware, controller.work.publishWork);
   router.post('/api/works/publish-template/:id', jwtMiddleware, controller.work.publishTemplate);
 
-  router.post('/api/utils/upload', controller.utils.fileUploadByStream);
+  router.post('/utils/upload-img', jwtMiddleware, controller.utils.uploadMultipleFiles);
 };

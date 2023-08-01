@@ -49,10 +49,12 @@ export default (appInfo: EggAppInfo) => {
     allowMethods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH',
   };
 
-  // config.multipart = {
-  //   mode: 'file',
-  //   tmpdir: join(appInfo.baseDir, 'uploads'),
-  // };
+  config.multipart = {
+    // mode: 'file',
+    // tmpdir: join(appInfo.baseDir, 'uploads'),
+    whitelist: [ '.png', '.jpg', '.gif', '.webp' ],
+    fileSize: '1mb',
+  };
 
   config.oss = {
     client: {

@@ -1,4 +1,4 @@
-import { Controller } from 'egg';
+import { Controller, FileStream } from 'egg';
 import sharp from 'sharp';
 import { parse, join, extname } from 'path';
 import { nanoid } from 'nanoid';
@@ -20,6 +20,33 @@ export default class UtilsController extends Controller {
       await sendToWormhole(stream);
       return ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
     }
+  }
+  async uploadMultipleFiles() {
+    const { ctx, app } = this;
+    const { fileSize } = app.config.multipart;
+    const parts = ctx.multipart({ limits: { fileSize: fileSize as number } });
+    const urls:string[] = [];
+    let part: FileStream| string[];
+    while ((part = await parts())) {
+      if (Array.isArray(part)) {
+        app.logger.info(part);
+      } else {
+        try {
+          const savedOssPath = join('test', nanoid(6) + extname(part.filename));
+          const result = await ctx.oss.put(savedOssPath, part);
+          const { url } = result;
+          urls.push(url);
+          if (part.truncated) {
+            await ctx.oss.delete(savedOssPath);
+            return ctx.helper.error({ ctx, errorType: 'imageUploadFileSizeError' });
+          }
+        } catch (error) {
+          await sendToWormhole(part);
+          return ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
+        }
+      }
+    }
+    ctx.helper.success({ ctx, res: { urls } });
   }
   uploadFileUseBusBoy() {
     const { ctx, app } = this;
