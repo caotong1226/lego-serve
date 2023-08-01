@@ -33,6 +33,7 @@
     "@eggjs/tegg-schedule-plugin": "^3.5.2",
     "ali-oss": "^6.17.1",
     "axios": "^1.4.0",
+    "busboy": "^1.6.0",
     "dotenv": "^16.3.1",
     "egg": "^3.15.0",
     "egg-bcrypt": "^1.1.0",
@@ -50,9 +51,13 @@
     "mongoose": "^7.4.0",
     "mongoose-sequence": "^5.3.1",
     "nanoid": "^3.1.30",
-    "sharp": "^0.32.4"
+    "sharp": "^0.32.4",
+    "stream-wormhole": "^1.1.0"
   },
   "devDependencies": {
+    "@types/ali-oss": "^6.16.8",
+    "@types/busboy": "^1.5.0",
+    "@types/sharp": "^0.32.0",
     "@eggjs/tsconfig": "1",
     "@types/mocha": "10",
     "@types/node": "18",

@@ -4,8 +4,52 @@ import { parse, join, extname } from 'path';
 import { nanoid } from 'nanoid';
 import { createWriteStream } from 'fs';
 import { pipeline } from 'stream/promises';
+import * as sendToWormhole from 'stream-wormhole';
+import Busboy from 'busboy';
 
 export default class UtilsController extends Controller {
+  async uploadToOss() {
+    const { ctx } = this;
+    const stream = await ctx.getFileStream();
+    const savedOssPath = join('test', nanoid(6) + extname(stream.filename));
+    try {
+      const result = await ctx.oss.put(savedOssPath, stream);
+      const { name, url } = result;
+      ctx.helper.success({ ctx, res: { name, url } });
+    } catch (error) {
+      await sendToWormhole(stream);
+      return ctx.helper.error({ ctx, errorType: 'imageUploadFail' });
+    }
+  }
+  uploadFileUseBusBoy() {
+    const { ctx, app } = this;
+    return new Promise<string[]>(resolve => {
+      const busboy = Busboy({ headers: ctx.req.headers });
+      const results: string[] = [];
+      busboy.on('file', (fieldname, file, filename) => {
+        app.logger.info(fieldname, file, filename);
+        const uid = nanoid(6);
+        const savedFilePath = join(app.config.baseDir, 'uploads', uid + extname(filename as any));
+        file.pipe(createWriteStream(savedFilePath));
+        file.on('end', () => {
+          results.push(savedFilePath);
+        });
+      });
+      busboy.on('field', (fieldname, val) => {
+        app.logger.info(fieldname, val);
+      });
+      busboy.on('finish', () => {
+        app.logger.info('finish');
+        resolve(results);
+      });
+      ctx.req.pipe(busboy);
+    });
+  }
+  async testBusBoy() {
+    const { ctx } = this;
+    const results = await this.uploadFileUseBusBoy();
+    ctx.helper.success({ ctx, res: results });
+  }
   async fileLocalUpload() {
     const { ctx, app } = this;
     const { filepath } = ctx.request.files[0];
@@ -27,7 +71,7 @@ export default class UtilsController extends Controller {
     const url = filepath.replace(app.config.baseDir, app.config.baseUrl);
     ctx.helper.success({ ctx, res: { url, thumbnailUrl: thumbnailUrl ? thumbnailUrl : url } });
   }
-  pathToURL(path:string) {
+  pathToURL(path: string) {
     const { app } = this;
     return path.replace(app.config.baseDir, app.config.baseUrl);
   }
