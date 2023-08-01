@@ -62,8 +62,8 @@ export default (appInfo: EggAppInfo) => {
     client: {
       accessKeyId: process.env.ALI_KEY_ID || '',
       accessKeySecret: process.env.ALI_KEY_SECRET || '',
-      bucket: '',
-      endpoint: '',
+      bucket: 'robot-server-image',
+      endpoint: 'oss-cn-hangzhou.aliyuncs.com',
     },
   };
 

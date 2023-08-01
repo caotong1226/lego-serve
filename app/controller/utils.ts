@@ -6,8 +6,45 @@ import { createWriteStream } from 'fs';
 import { pipeline } from 'stream/promises';
 import * as sendToWormhole from 'stream-wormhole';
 import Busboy from 'busboy';
+import { createSSRApp } from 'vue';
+import { renderToString, renderToNodeStream } from '@vue/server-renderer';
 
 export default class UtilsController extends Controller {
+  async renderH5PageTest() {
+    const { ctx } = this;
+    const vueApp = createSSRApp({
+      data: () => ({ msg: 'hello world' }),
+      template: '<h1>{{msg}}</h1>',
+    });
+    const appContent = await renderToString(vueApp);
+    ctx.response.type = 'text/html';
+    ctx.body = appContent;
+    const stream = renderToNodeStream(vueApp);
+    ctx.status = 200;
+    await pipeline(stream, ctx.res);
+  }
+  splitIdAndUuid(str = '') {
+    const result = { id: 0, uuid: '' };
+    if (!str) return result;
+    const index = str.indexOf('-');
+    if (index < 0) return result;
+    result.id = Number(str.slice(0, index));
+    result.uuid = str.slice(index + 1);
+    return result;
+  }
+  async renderToH5Page() {
+    // id-uid split('-')
+    // uuid = aa-bb-cc
+    const { ctx } = this;
+    const { idAndUuid } = ctx.params;
+    const query = this.splitIdAndUuid(idAndUuid);
+    try {
+      const pageData = await ctx.service.utils.renderToPageData(query);
+      await ctx.render('page.nj', pageData);
+    } catch (e) {
+      ctx.helper.error({ ctx, errnoType: 'h5WorkNotExistError' });
+    }
+  }
   async uploadToOss() {
     const { ctx } = this;
     const stream = await ctx.getFileStream();
