@@ -6,6 +6,10 @@ import { PopulateOptions } from 'mongoose';
 const workCreateRules = {
   title: 'string',
 };
+const channelCreateRules = {
+  name: 'string',
+  workId: 'number',
+};
 
 export interface IndexCondition {
   pageIndex?: number;
@@ -17,7 +21,8 @@ export interface IndexCondition {
 }
 
 export default class WorkController extends Controller {
-  @checkPermission('Work', 'workNoPermissionFail')
+  @inputValidate(channelCreateRules, 'channelValidateFail')
+  @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissionFail', { value: { type: 'body', valueKey: 'workId' } })
   async createChannel() {
     const { ctx } = this;
     const { name, workId } = ctx.request.body;
@@ -25,7 +30,7 @@ export default class WorkController extends Controller {
     await ctx.model.Work.findOneAndUpdate({ id: workId }, { $push: { channels: newChannel } });
     ctx.helper.success({ ctx, res: newChannel });
   }
-  @checkPermission('Work', 'workNoPermissionFail')
+  @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissionFail')
   async getWorkChannel() {
     const { ctx, app } = this;
     const { id } = ctx.params;
@@ -37,7 +42,7 @@ export default class WorkController extends Controller {
       ctx.helper.error({ ctx, errorType: 'channelOperateFail' });
     }
   }
-  @checkPermission('Work', 'workNoPermissionFail')
+  @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissionFail', { key: 'channels.id' })
   async updateChannelName() {
     const { ctx, app } = this;
     const { id } = ctx.params;
@@ -49,7 +54,7 @@ export default class WorkController extends Controller {
       ctx.helper.error({ ctx, errorType: 'channelOperateFail' });
     }
   }
-  @checkPermission('Work', 'workNoPermissionFail')
+  @checkPermission({ casl: 'Channel', mongoose: 'Work' }, 'workNoPermissionFail', { key: 'channels.id' })
   async deleteChannel() {
     const { ctx, app } = this;
     const { id } = ctx.params;

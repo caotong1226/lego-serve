@@ -27,6 +27,7 @@
   "dependencies": {
     "@alicloud/dysmsapi20170525": "^2.0.24",
     "@alicloud/openapi-client": "^0.4.6",
+    "@casl/ability": "^6.5.0",
     "@eggjs/tegg": "^3.5.2",
     "@eggjs/tegg-aop-plugin": "^3.5.2",
     "@eggjs/tegg-config": "^3.2.3",
@@ -52,6 +53,7 @@
     "egg-validate": "^2.0.2",
     "egg-view-nunjucks": "^2.3.0",
     "lego-components": "^0.1.7",
+    "lodash": "^4.17.21",
     "mongodb": "^5.7.0",
     "mongoose": "^7.4.0",
     "mongoose-sequence": "^5.3.1",
@@ -63,6 +65,7 @@
     "@eggjs/tsconfig": "1",
     "@types/ali-oss": "^6.16.8",
     "@types/busboy": "^1.5.0",
+    "@types/lodash": "^4.14.196",
     "@types/mocha": "10",
     "@types/node": "18",
     "clean-webpack-plugin": "^4.0.0",
