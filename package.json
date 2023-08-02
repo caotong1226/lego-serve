@@ -27,7 +27,7 @@
   "dependencies": {
     "@alicloud/dysmsapi20170525": "^2.0.24",
     "@alicloud/openapi-client": "^0.4.6",
-    "@casl/ability": "^6.5.0",
+    "@casl/ability": "^5.4.3",
     "@eggjs/tegg": "^3.5.2",
     "@eggjs/tegg-aop-plugin": "^3.5.2",
     "@eggjs/tegg-config": "^3.2.3",
