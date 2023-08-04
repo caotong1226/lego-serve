@@ -44,7 +44,7 @@ export default class UserService extends Service {
     const user = await this.findByUsername(cellphone);
     // 检查user记录是否存在
     if (user) {
-      const token = app.jwt.sign({ username: user.username, _id: user._id }, app.config.jwt.secret);
+      const token = app.jwt.sign({ username: user.username, _id: user._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires });
       return token;
     }
     const userCreatedData: Partial<UserProps> = {
@@ -54,7 +54,7 @@ export default class UserService extends Service {
       type: 'cellphone',
     };
     const newUser = await ctx.model.User.create(userCreatedData);
-    const token = app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret);
+    const token = app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires });
     return token;
   }
   async getAccessToken(code: string) {
@@ -94,7 +94,7 @@ export default class UserService extends Service {
     const existUser = await this.findByUsername(`Gitee${stringId}`);
     // 假如存在，返回token
     if (existUser) {
-      const token = app.jwt.sign({ username: existUser.username, _id: existUser._id }, app.config.jwt.secret);
+      const token = app.jwt.sign({ username: existUser.username, _id: existUser._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires });
       return token;
     }
     // 假如不存在，新建用户
@@ -108,7 +108,7 @@ export default class UserService extends Service {
       type: 'oauth',
     };
     const newUser = await ctx.model.User.create(userCreatedData);
-    const token = app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret);
+    const token = app.jwt.sign({ username: newUser.username, _id: newUser._id }, app.config.jwt.secret, { expiresIn: app.config.jwtExpires });
     return token;
   }
 }

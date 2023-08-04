@@ -17,5 +17,6 @@ config/**/*.js
 app/**/*.map
 test/**/*.map
 config/**/*.map
+app.js
 
 .env

@@ -29,6 +29,7 @@ export default (appInfo: EggAppInfo) => {
     csrf: {
       enable: false,
     },
+    domainWhiteList: [ 'http://localhost:8080' ],
   };
 
   config.jwt = {
@@ -46,10 +47,10 @@ export default (appInfo: EggAppInfo) => {
     },
   };
 
-  config.cors = {
-    origin: 'https://localhost:8080',
-    allowMethods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH',
-  };
+  // config.cors = {
+  //   origin: 'https://localhost:8080',
+  //   allowMethods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH',
+  // };
 
   config.multipart = {
     // mode: 'file',
@@ -83,9 +84,9 @@ export default (appInfo: EggAppInfo) => {
   const giteeOauthConfig = {
     clientId: process.env.GITEE_OAUTH_CLIENT_ID,
     clientSecret: process.env.GITEE_OAUTH_CLIENT_SECRET,
-    redirectUrl: 'http://localhost:7002/api/users/loginGetOauthToken',
-    authUrl: 'https://gitee.com/oauth/token?grant_type=authorization_code',
-    giteeUserInfoApi: 'https://gitee.com/api/v5/user',
+    redirectURL: 'http://localhost:7001/api/users/passport/gitee/callback',
+    authURL: 'https://gitee.com/oauth/token?grant_type=authorization_code',
+    giteeUserAPI: 'https://gitee.com/api/v5/user',
   };
 
   // add your special config in here
@@ -95,6 +96,7 @@ export default (appInfo: EggAppInfo) => {
     aliCloudConfig,
     giteeOauthConfig,
     H5BaseURL: 'http://localhost:7001/api/pages',
+    jwtExpires: '1h',
   };
 
   // the return config will combines to EggAppConfig
