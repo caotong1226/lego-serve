@@ -20,3 +20,4 @@ config/**/*.map
 app.js
 
 .env
+.docker-volumes
